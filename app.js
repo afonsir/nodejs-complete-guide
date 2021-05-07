@@ -17,7 +17,7 @@ const server = http.createServer((request, response) => {
   if (url === '/message' && method === 'POST') {
     const body = [];
 
-    request.on('data', (chunk) => {
+    request.on('data', chunk => {
       console.log(chunk);
       body.push(chunk);
     });
@@ -26,11 +26,15 @@ const server = http.createServer((request, response) => {
       const parsedBody = Buffer.concat(body).toString();
       const message = parsedBody.split('=')[1];
 
-      fs.writeFileSync('message.txt', message);
+      fs.writeFile('message.txt', message, err => {
+        console.log('Finish File writing');
+      });
     });
 
     response.statusCode = 302;
     response.setHeader('Location', '/');
+
+    console.log('Redirecting...');
 
     return response.end();
   }
